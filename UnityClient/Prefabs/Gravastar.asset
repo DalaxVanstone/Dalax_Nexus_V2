@@ -1,0 +1,14 @@
+
+%YAML 1.1
+%TAG !u!114 &11400000
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GravastarAsset
+  m_EditorClassIdentifier: 
+  coreStability: 1.0
+  gravitationalIntensity: 5.0
+  vacuumEnergyLevel: 42.0

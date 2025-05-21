@@ -1,0 +1,13 @@
+GameObject:
+  m_Name: TemporalMap
+  m_Component:
+    - component: Canvas
+    - component: TemporalRegistry
+  m_Children:
+    - MinimapGravastarAnchor (Image)
+  m_Layer: UI
+  m_Active: 1
+MinimapGravastarAnchor:
+  m_Sprite: AnchorIcon.png
+  m_Position: Auto-calculated from GravastarField
+  m_TintColor: {r: 0.4, g: 0.9, b: 1.0, a: 1.0}

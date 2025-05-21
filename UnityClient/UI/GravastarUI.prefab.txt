@@ -1,0 +1,17 @@
+GameObject:
+  m_Name: GravastarUI
+  m_Component:
+    - component: Canvas
+    - component: CanvasScaler
+    - component: GraphicRaycaster
+    - component: GravastarHUD
+  m_Children:
+    - Text (TMP)
+  m_Layer: UI
+  m_Active: 1
+Text (TMP):
+  m_Text: "Gravastar Core: {energyLevel}"
+  m_FontSize: 36
+  m_Color: {r: 0.2, g: 0.9, b: 1.0, a: 1.0}
+  m_Alignment: Center
+  m_Position: {x: 0, y: -200}

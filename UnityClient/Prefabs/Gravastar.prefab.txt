@@ -1,0 +1,6 @@
+
+% This is a placeholder. In Unity, you would create a prefab by attaching:
+% - A spherical mesh (e.g. a glowing orb)
+% - GravastarField.cs as a component
+% - A shader material (plasma or dark energy-like)
+% Save as Gravastar.prefab in Unity.

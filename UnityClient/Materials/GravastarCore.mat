@@ -1,0 +1,14 @@
+Material:
+  serializedVersion: 6
+  m_Name: GravastarCore
+  m_Shader: Standard
+  m_ShaderKeywords: _EMISSION
+  m_CustomRenderQueue: -1
+  m_SavedProperties:
+    m_TexEnvs: {}
+    m_Floats:
+      _Glossiness: 0.3
+      _Metallic: 0.8
+    m_Colors:
+      _Color: {r: 0.2, g: 0.7, b: 1.0, a: 1.0}
+      _EmissionColor: {r: 0.0, g: 2.5, b: 5.0, a: 1.0}

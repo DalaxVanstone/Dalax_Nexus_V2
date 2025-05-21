@@ -1,0 +1,75 @@
+{
+  "projectName": "Dalax_BiobotProject",
+  "version": "2.1",
+  "token": {
+    "name": "Dalax Credit",
+    "symbol": "DLXC",
+    "network": "Ethereum Testnet (Sepolia)",
+    "chainId": 11155111,
+    "contracts": {
+      "dlxcToken": "0xYourTokenContractAddress",
+      "realitySeedNFT": "0xYourNFTContractAddress"
+    }
+  },
+  "simulation": {
+    "engine": "TensorFlowQuantum",
+    "mutationRate": 0.08,
+    "entropyLoop": true,
+    "maxGenerations": 1024,
+    "yieldScoreRange": [0, 10000],
+    "outputFormat": "json",
+    "ecosystemPresets": [
+      "wetlands",
+      "microgravity",
+      "crystallineCacoon",
+      "mycelialForest",
+      "insectoidHive"
+    ],
+    "biobotTypes": [
+      "standard",
+      "xenobot",
+      "cybernetic_insect",
+      "quantum_dot_entity",
+      "organioid",
+      "cacoon",
+      "microbot",
+      "nanobot",
+      "biohybrid"
+    ]
+  },
+  "ai": {
+    "modelsPath": "./AI/models/",
+    "metrics": {
+      "survivalRate": true,
+      "resourceConsumption": true,
+      "mutationEfficiency": true,
+      "learningAdaptivity": true,
+      "yieldGenerated": true
+    },
+    "neuromorphic": {
+      "enabled": true,
+      "baseModel": "nNet3-mimic",
+      "memoryDecayRate": 0.015
+    }
+  },
+  "blockchain": {
+    "enabled": true,
+    "providerUrl": "https://sepolia.infura.io/v3/YOUR_INFURA_KEY",
+    "gasLimit": 500000,
+    "yieldOracleAddress": "0xYourYieldOracleAddress"
+  },
+  "containers": {
+    "dockerized": true,
+    "composePath": "./Docker/docker-compose.yml"
+  },
+  "logging": {
+    "debugMode": false,
+    "logFile": "./logs/simulation.log",
+    "logLevel": "info"
+  },
+  "metadata": {
+    "seedEncoding": "base64",
+    "versioning": "timestamped",
+    "exportFolder": "./Docs/seeds/"
+  }
+}

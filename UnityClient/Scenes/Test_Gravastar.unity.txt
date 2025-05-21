@@ -1,0 +1,8 @@
+
+% Unity scene placeholder. Create a scene with:
+% - Biobot prefab
+% - Gravastar prefab
+% - Main Camera + Lighting
+% - Attach BiobotGravastarInteraction.cs to Biobot
+% - Attach GravastarField.cs + GravastarAnchor.cs to Gravastar
+% Save scene as Test_Gravastar.unity
