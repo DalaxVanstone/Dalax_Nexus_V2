@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  tfq-engine:
+    image: tensorflow/tensorflow:2.6.0
+    command: python -u sim_engine.py
+    volumes:
+      - ../sim:/app
+    working_dir: /app
+  classical-engine:
+    image: python:3.9-slim
+    command: python -u classical_engine.py
+    volumes:
+      - ../sim:/app
+    working_dir: /app
+  blockchain-node:
+    image: trufflesuite/ganache-cli
+    command: -p 8545 -d
+    ports:
+      - "8545:8545"

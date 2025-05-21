@@ -1,0 +1,82 @@
+# Dalax_BiobotProject/Docker/Dockerfile.tfq
+
+# 1. Choose a base Python image that supports TensorFlow
+# Using an official TensorFlow image is often a good start as it comes with many dependencies.
+# Ensure it's compatible with the TF & TFQ versions you intend to use.
+FROM tensorflow/tensorflow:2.13.0-gpu-jupyter AS builder 
+# The -gpu tag means it includes CUDA drivers if you plan to use GPU. 
+# For CPU only, you might pick a non-gpu tag e.g., tensorflow/tensorflow:2.13.0
+# Jupyter is included here but not strictly necessary for the API.
+
+# Alternatively, a slimmer Python base image and install TF manually:
+# FROM python:3.9-slim AS builder
+
+# 2. Set the working directory
+WORKDIR /usr/src/app
+
+# 3. Copy requirements file (if you have one)
+# It's good practice to list Python dependencies in a requirements.txt file
+COPY QuantumEngine/requirements.txt ./QuantumEngine/
+# If requirements.txt is at the root of QuantumEngine:
+# WORKDIR /usr/src/app/QuantumEngine
+# RUN pip install --no-cache-dir -r requirements.txt
+# WORKDIR /usr/src/app
+
+# If you don't have a requirements.txt yet, you'll install packages directly later.
+# For now, let's assume you'll add one. A minimal one might look like:
+# Flask
+# Flask-CORS
+# tensorflow  (Ensure version matches base image or your needs)
+# tensorflow-quantum (Ensure version compatibility with TF)
+# gunicorn (For running Flask in production)
+# numpy
+# sympy
+# cirq
+
+# If installing directly without requirements.txt for now (adapt versions as needed):
+RUN pip install --no-cache-dir \
+    Flask \
+    Flask-CORS \
+    gunicorn \
+    numpy \
+    sympy \
+    cirq \
+    tensorflow-quantum==0.7.2 
+    # Ensure TFQ version is compatible with the base TensorFlow version.
+    # TF 2.13.0 might need a specific TFQ. TFQ 0.7.2 was for TF ~2.7-2.9.
+    # You'll need to verify TFQ compatibility with TF 2.13.0. 
+    # It's possible you might need to build TFQ from source or use a different TF base.
+    # Or use a specific TFQ version that is known to work with your TF base.
+    # Check TFQ GitHub for compatibility.
+
+# 4. Copy your QuantumEngine application code
+COPY QuantumEngine/ ./QuantumEngine/
+COPY .env.example ./.env.example
+
+# 5. Expose the port the app runs on (as defined in server.py or .env)
+# Defaulting to 8000 as per server.py skeleton
+EXPOSE 8000
+
+# 6. Define the command to run your application using Gunicorn
+# Gunicorn is a production-ready WSGI server for Python.
+# The command 'server:app' refers to server.py and the Flask instance 'app'.
+# Ensure server.py is in the QuantumEngine/api/ directory.
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "QuantumEngine.api.server:app"]
+# Note: The module path for Gunicorn might need adjustment based on your exact
+# file structure within QuantumEngine and how Python imports work there.
+# If server.py is directly in QuantumEngine, it might be "server:app".
+# If it's in QuantumEngine/api/server.py and QuantumEngine is in PYTHONPATH,
+# then "api.server:app" might be suitable if run from QuantumEngine dir,
+# or adjust the CMD to cd into QuantumEngine/api first or use Python -m.
+# A common approach is to ensure your app is runnable as a module.
+# For example, if QuantumEngine/api/server.py can be run via python -m QuantumEngine.api.server
+# then Gunicorn might be set up similarly.
+# Let's assume server.py is in QuantumEngine/api and we make QuantumEngine the working dir for python path
+# CMD cd QuantumEngine && gunicorn --bind 0.0.0.0:8000 api.server:app
+# A simpler structure for now if server.py is `QuantumEngine/server.py`:
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "QuantumEngine.server:app"]
+# Given the path from previous file generations was QuantumEngine/api/server.py
+# The module path for gunicorn would be relative to where it's run.
+# If WORKDIR is /usr/src/app, and server.py is at /usr/src/app/QuantumEngine/api/server.py
+# then CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-w", "4", "QuantumEngine.api.server:app"]
+# The -w 4 means 4 worker processes.

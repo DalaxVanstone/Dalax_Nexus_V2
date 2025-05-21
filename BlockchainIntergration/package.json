@@ -1,0 +1,14 @@
+{
+  "name": "dalax-biobotproject",
+  "version": "1.0.0",
+  "main": "hardhat.config.js",
+  "license": "MIT",
+  "dependencies": {
+    "@nomiclabs/hardhat-waffle": "^2.0.0",
+    "ethereum-waffle": "^3.0.0",
+    "chai": "^4.2.0",
+    "ethers": "^5.0.0",
+    "hardhat": "^2.0.0",
+    "@openzeppelin/contracts": "^4.0.0"
+  }
+}

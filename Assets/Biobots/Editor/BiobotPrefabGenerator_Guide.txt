@@ -1,0 +1,13 @@
+How to Use This Improved Script:
+ * Create Editor Folder: If you don't have one, create a folder named Editor directly inside your Assets folder (Assets/Editor/).
+ * Place the Script: Save the code above as BiobotPrefabGenerator.cs inside this Assets/Editor/ folder.
+ * Ensure Shader Exists: Make sure your Rahinii/BiobotShader.shader (or a similar name) is correctly placed in Assets/Materials/BiobotMaterials/ and the Shader.Find("Rahinii/BiobotShader") call matches its exact path in the script.
+ * Run the Generator:
+   * In Unity, go to the top menu bar.
+   * You will now see a new menu item: Dalax Tools.
+   * Click Dalax Tools > Generate Quantum Biobot Prefabs.
+   * A new Editor Window will appear. Use the "Generate All Quantum Biobot Prefabs" button.
+ * Observe Results:
+   * Unity will create new folders: Assets/Models/BiobotModels/Generated/, Assets/Materials/BiobotMaterials/Generated/, and Assets/Biobots/DNA_Templates/.
+   * Inside these, you will find all your generated prefabs, their associated materials, and most importantly, their unique BiobotDNA ScriptableObject assets.
+Now, each of your generated biobot prefabs will come pre-linked with a customizable BiobotDNA asset, allowing for easy tweaking of their genetic predispositions directly in the inspector! This truly embodies the Dalax Nexus's vision of highly configurable and dynamically evolving biobots.

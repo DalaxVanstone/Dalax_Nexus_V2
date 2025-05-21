@@ -1,0 +1,88 @@
+# Dalax_BiobotProject/Docker/Dockerfile.unityBuild
+# Conceptual Dockerfile for creating a headless Unity Linux build
+
+# Stage 1: Unity Builder Image with a specific Unity Editor version
+# You'd typically use an existing image that has the Unity Editor installed
+# or build one yourself. Examples: game-ci/docker-unity-builder, or custom.
+# Ensure the Unity version matches your project.
+ARG UNITY_VERSION=2022.3.10f1 
+# FROM unityci/editor:ubuntu-${UNITY_VERSION}-linux-il2cpp AS builder
+# For this example, let's assume a more generic base and manual setup steps (which is harder)
+# A better approach is to use pre-built Unity editor images like those from GameCI.
+FROM ubuntu:22.04 AS builder
+
+ARG UNITY_VERSION
+ENV UNITY_PATH="/opt/Unity/Editor/Unity" \
+    PROJECT_PATH="/usr/src/app/UnityClient" \
+    BUILD_PATH="/usr/src/app/Builds/LinuxHeadless"
+
+WORKDIR /usr/src/app
+
+# --- Dependencies for Unity (example for a bare Ubuntu) ---
+# This section would be extensive if not using a pre-built Unity image.
+# It would include dependencies for Unity Editor, build tools, etc.
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     # many dependencies like libasound2, libgtk-3-0, xvfb, etc. \
+#     && rm -rf /var/lib/apt/lists/*
+
+# --- Download and Install Unity Editor (Highly Complex - Recommended to use GameCI images) ---
+# This is a placeholder. Actual download/install steps are involved.
+# RUN echo "Placeholder: Download and install Unity Editor version ${UNITY_VERSION}"
+# RUN mkdir -p /opt/Unity/Editor && touch ${UNITY_PATH} && chmod +x ${UNITY_PATH} 
+# COPY ./path_to_unity_installation_files /opt/Unity_Install/
+# RUN /opt/Unity_Install/install.sh
+# For CI/CD, you'd also need license activation steps:
+# ENV UNITY_LICENSE_CONTENT "${UNITY_LICENSE}" 
+# RUN ${UNITY_PATH} -batchmode -nographics -createManualActivationFile -logfile /dev/stdout || true
+# (Then use the .alf file to get a .ulf license file and place it)
+
+# --- Copy Unity Project Files ---
+# Copy your UnityClient project into the container
+COPY ./UnityClient ${PROJECT_PATH}
+
+# --- Build Script (Conceptual) ---
+# You'd typically have a C# build script in your Unity project's Editor folder.
+# Example: ${PROJECT_PATH}/Assets/Editor/BuildScripts.cs
+# with a static method like `PerformLinuxHeadlessBuild()`.
+
+# RUN echo "Starting Unity headless build..."
+# RUN ${UNITY_PATH} \
+#   -batchmode \
+#   -nographics \
+#   -silent-crashes \
+#   -logFile /dev/stdout \
+#   -projectPath ${PROJECT_PATH} \
+#   -buildTarget Linux64 \
+#   -customBuildPath ${BUILD_PATH}/BiobotSimulationServer \
+#   -executeMethod BuildScripts.PerformLinuxHeadlessBuild \
+#   -quit \
+#   || (cat /root/.config/Unity/Editor/Editor.log && exit 1) # Print logs on failure
+
+# For now, let's just create a placeholder build output
+RUN mkdir -p ${BUILD_PATH} && \
+    echo "Unity Headless Build Placeholder for ${PROJECT_PATH}" > ${BUILD_PATH}/build_info.txt && \
+    echo "Target: LinuxHeadless" >> ${BUILD_PATH}/build_info.txt
+
+# Stage 2: Runtime Image (Slimmer image to run the build)
+FROM ubuntu:22.04 AS runtime
+# Or an even slimmer base like alpine if your build is truly self-contained
+
+WORKDIR /app
+
+# Copy the build output from the builder stage
+COPY --from=builder /usr/src/app/Builds/LinuxHeadless /app/
+
+# Add any runtime dependencies required by your headless Unity build
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     # libasound2, etc. (depending on what your build needs) \
+#     && rm -rf /var/lib/apt/lists/*
+
+# Expose any ports your headless server might use (if it's a server)
+# EXPOSE 7777/udp
+
+# Command to run your headless Unity application
+# The actual executable name will depend on your Unity build settings.
+# ENTRYPOINT ["/app/BiobotSimulationServer.x86_64"]
+# Add any command line arguments your headless app might need:
+# CMD ["-logFile", "/dev/stdout"]
+ENTRYPOINT ["echo", "Running Unity Headless Build Placeholder. Executable would be here: /app/BiobotSimulationServer.x86_64"]

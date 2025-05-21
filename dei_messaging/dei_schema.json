@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DEI_Message",
+  "type": "object",
+  "required": [
+    "sourceNode",
+    "destinationNode",
+    "timestamp",
+    "messageType",
+    "entanglementStatus",
+    "payload"
+  ],
+  "properties": {
+    "sourceNode": {
+      "type": "string"
+    },
+    "destinationNode": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "messageType": {
+      "type": "string",
+      "enum": [
+        "EntanglementRequest",
+        "EntanglementConfirmed",
+        "PairingRejected",
+        "StateUpdate",
+        "TriggerEvent",
+        "EchoResponse",
+        "DecoherenceEvent"
+      ]
+    },
+    "entanglementStatus": {
+      "type": "string",
+      "enum": [
+        "AwaitingPairing",
+        "Entangled",
+        "Decohered"
+      ]
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "definitions": {
+    "EntanglementRequestPayload": {
+      "type": "object",
+      "properties": {
+        "qubitState": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "temporalAnchor": {
+          "type": "string"
+        },
+        "geneticTrigger": {
+          "type": "string"
+        },
+        "materialSignature": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "qubitState",
+        "temporalAnchor",
+        "geneticTrigger"
+      ]
+    },
+    "EntanglementConfirmedPayload": {
+      "type": "object",
+      "properties": {
+        "circuitId": {
+          "type": "string"
+        },
+        "sharedState": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stability": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "circuitId",
+        "sharedState",
+        "stability"
+      ]
+    },
+    "EchoResponsePayload": {
+      "type": "object",
+      "properties": {
+        "reflectionDelay": {
+          "type": "number"
+        },
+        "decoherenceRisk": {
+          "type": "number"
+        },
+        "qubitSnapshot": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "echoStrength": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "reflectionDelay",
+        "decoherenceRisk",
+        "qubitSnapshot",
+        "echoStrength"
+      ]
+    },
+    "DecoherenceEventPayload": {
+      "type": "object",
+      "properties": {
+        "cause": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "number"
+        },
+        "affectedCircuits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "cause",
+        "severity",
+        "affectedCircuits"
+      ]
+    }
+  }
+}

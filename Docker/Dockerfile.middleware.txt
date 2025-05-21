@@ -1,0 +1,49 @@
+# Dalax_BiobotProject/Docker/Dockerfile.middleware
+
+# 1. Choose a base Node.js image (same as for Dockerfile.api for consistency)
+FROM node:18-alpine AS builder
+# Alpine is lightweight.
+
+# 2. Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# 3. Copy package.json and package-lock.json (or yarn.lock) from BlockchainIntegration
+# This leverages Docker's cache.
+COPY BlockchainIntegration/package.json BlockchainIntegration/package-lock.json* ./BlockchainIntegration/
+# If using yarn:
+# COPY BlockchainIntegration/package.json BlockchainIntegration/yarn.lock ./BlockchainIntegration/
+
+# Navigate into the directory where package.json is
+WORKDIR /usr/src/app/BlockchainIntegration
+
+# 4. Install ALL dependencies (including devDependencies like Hardhat)
+# For a Hardhat node, you typically need Hardhat itself and any plugins.
+RUN npm install
+# If using yarn:
+# RUN yarn install
+
+# Go back to the app root
+WORKDIR /usr/src/app
+
+# 5. Copy the rest of your BlockchainIntegration application code
+# This includes hardhat.config.js, contracts/, deploy/ or deploy.js, test/, etc.
+# Also, the middleware folder if it contains specific scripts for this service.
+COPY BlockchainIntegration/ ./BlockchainIntegration/
+COPY .env.example ./.env.example 
+# If there are specific scripts or configurations in a top-level `middleware/` folder
+# that this service needs, copy them as well. For example, if you had Dalax_BiobotProject/middleware_scripts/
+# COPY middleware_scripts/ ./middleware_scripts/ 
+# However, your original docker-compose context was ".", so it implies BlockchainIntegration/middleware/
+# if that's where specific files for this service are.
+# If BlockchainIntegration/middleware/ contains files needed for this specific Dockerfile,
+# they are already copied by `COPY BlockchainIntegration/ ./BlockchainIntegration/`.
+
+# 6. Expose the port Hardhat Node runs on (default is 8545)
+EXPOSE 8545
+
+# 7. Define the command to run your Hardhat node
+# This command will change directory to where your Hardhat project is
+# and then start the Hardhat node.
+# It's important that hardhat.config.js is correctly configured for the 'localhost' network.
+# The --hostname 0.0.0.0 makes it accessible from outside the container (by other services).
+CMD ["sh", "-c", "cd BlockchainIntegration && npx hardhat node --hostname 0.0.0.0"]

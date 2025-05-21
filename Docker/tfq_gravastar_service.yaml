@@ -1,0 +1,10 @@
+
+version: '3.8'
+services:
+  tfq_gravastar:
+    image: tensorflow/tensorflow:latest
+    volumes:
+      - ../QuantumEngine:/app
+    working_dir: /app/tfq_circuits
+    command: python3 gravastar_core.py
+    restart: unless-stopped

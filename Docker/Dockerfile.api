@@ -1,0 +1,43 @@
+# Dalax_BiobotProject/Docker/Dockerfile.api
+
+# 1. Choose a base Node.js image
+FROM node:18-alpine AS builder
+# Alpine is lightweight. Choose a version that matches your Node.js requirements.
+
+# 2. Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# 3. Copy package.json and package-lock.json (or yarn.lock)
+# We copy these first to leverage Docker cache. If these files don't change,
+# Docker won't re-run npm install in subsequent builds unless the cache is invalidated.
+COPY BlockchainIntegration/package.json BlockchainIntegration/package-lock.json* ./BlockchainIntegration/
+# If using yarn:
+# COPY BlockchainIntegration/package.json BlockchainIntegration/yarn.lock ./BlockchainIntegration/
+
+# Navigate into the directory where package.json is
+WORKDIR /usr/src/app/BlockchainIntegration
+
+# 4. Install dependencies
+RUN npm install --production
+# If using yarn:
+# RUN yarn install --production
+
+# Go back to the app root for copying the rest of the code
+WORKDIR /usr/src/app
+
+# 5. Copy the rest of your BlockchainIntegration application code
+# This includes mint_api.js, gen_metadata.js, contracts (for ABIs if loaded from file), etc.
+COPY BlockchainIntegration/ ./BlockchainIntegration/
+# Copy .env.example so it can be used as a template, actual .env will be volume mounted or through docker-compose
+COPY .env.example ./.env.example 
+
+# If your artifacts (ABIs) are necessary at runtime and are within BlockchainIntegration/artifacts
+# ensure they are copied. Or better, configure mint_api.js to read them from a specific path.
+
+# 6. Expose the port the app runs on (as defined in mint_api.js or .env)
+# Defaulting to 3001 as per mint_api.js skeleton
+EXPOSE 3001
+
+# 7. Define the command to run your application
+# This will run mint_api.js using Node.
+CMD ["node", "BlockchainIntegration/mint_api.js"]
