@@ -1,0 +1,45 @@
+// MinimapGravastarAnchor_Prefab_SetupGuide.txt
+
+This guide outlines how to create the MinimapGravastarAnchor prefab in Unity.
+This prefab will be instantiated by TemporalRegistry.cs for each detected Gravastar.
+
+---
+**Prefab Name:** MinimapGravastarAnchor
+**Location Suggestion:** Dalax_BiobotProject/Prefabs/UI/
+---
+
+**Steps to Create in Unity Editor:**
+
+1.  **Create UI Image:**
+    * In the Hierarchy, right-click on your `TemporalMap` Canvas (or any Canvas).
+    * Select `UI > Image`.
+    * Rename this new Image GameObject to `MinimapGravastarAnchor_Template` (or similar, you'll make a prefab from it).
+
+2.  **Configure RectTransform:**
+    * Select `MinimapGravastarAnchor_Template`.
+    * In the Inspector, find the `RectTransform` component.
+    * **Pivot:** Set to `(X: 0.5, Y: 0.5)` (center). This makes scaling and positioning easier.
+    * **Anchors:** Set to `middle-center` (Min X:0.5, Min Y:0.5, Max X:0.5, Max Y:0.5).
+    * **Pos X, Pos Y, Pos Z:** Set to `0, 0, 0`.
+    * **Width, Height:** Set to a small, icon-like size (e.g., `Width: 16, Height: 16` or `Width: 24, Height: 24`).
+
+3.  **Configure Image Component:**
+    * On the same GameObject, find the `Image` component.
+    * **Source Image:** Assign your `AnchorIcon.png` sprite here. (You'll need to import `AnchorIcon.png` into your project as a Sprite first - Texture Type: Sprite (2D and UI)).
+    * **Color (Tint):** Set to the specified color:
+        * R: 102 (or 0.4 in float)
+        * G: 230 (or 0.9 in float)
+        * B: 255 (or 1.0 in float)
+        * A: 255 (or 1.0 in float)
+    * **Raycast Target:** Usually, you'd want to disable this for minimap icons (`Raycast Target: false`) unless they need to be interactive.
+
+4.  **Create Prefab:**
+    * Drag the configured `MinimapGravastarAnchor_Template` GameObject from your Hierarchy into your Project window (e.g., into `Prefabs/UI/` folder). This creates the `MinimapGravastarAnchor.prefab`.
+    * You can now delete the `MinimapGravastarAnchor_Template` instance from your Hierarchy if it was under a test Canvas.
+
+5.  **Assign to TemporalRegistry:**
+    * Select your `TemporalMap` GameObject (which should have the `TemporalRegistry.cs` script).
+    * Drag the `MinimapGravastarAnchor.prefab` from your Project window to the `Gravastar Anchor Prefab` slot in the `TemporalRegistry` component in the Inspector.
+
+---
+**End of Guide**

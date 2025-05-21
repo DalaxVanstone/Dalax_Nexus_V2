@@ -1,0 +1,61 @@
+// TemporalMap_Prefab_SetupGuide.txt
+
+This guide outlines how to create the TemporalMap prefab in Unity, which will act as the main UI container for displaying Gravastar locations.
+This is based on your initial "TemporalMap.prefab.txt" description.
+
+---
+**Prefab Name:** TemporalMap
+**Location Suggestion:** Dalax_BiobotProject/Prefabs/UI/
+---
+
+**Steps to Create in Unity Editor:**
+
+1.  **Create Canvas (if you don't have a main UI canvas):**
+    * In the Hierarchy, right-click -> `UI -> Canvas`.
+    * Rename it `TemporalMapCanvas` or similar if it's dedicated, or use an existing main Canvas.
+    * Ensure it has a `Canvas Scaler` component (usually added by default). Set UI Scale Mode (e.g., Scale With Screen Size).
+    * Ensure it has a `Graphic Raycaster` component.
+
+2.  **Create Main TemporalMap GameObject:**
+    * Right-click on your Canvas GameObject in the Hierarchy.
+    * Select `UI -> Panel` (a Panel is a good starting point as it comes with an Image component you can use as a background and a RectTransform already set up to stretch). Or, `Create Empty` if you prefer a non-visual container initially.
+    * Rename this new GameObject to `TemporalMap`.
+    * **Layer:** Set to `UI` (usually default for UI elements).
+    * **Active:** Ensure it's active (`m_Active: 1`).
+
+3.  **Configure TemporalMap RectTransform:**
+    * Select the `TemporalMap` GameObject.
+    * Adjust its `RectTransform` to position and size it on the screen as desired (e.g., bottom-left corner, square aspect ratio).
+        * Example for bottom-left: Anchors: `bottom-left`, Pivot: `(0,0)`. Set Width/Height (e.g., 200x200).
+    * If you used a Panel, you can customize its background `Image` component (e.g., set a semi-transparent background color or a minimap frame sprite). If you used Create Empty, you can add an `Image` component manually if a background is needed.
+
+4.  **Create Anchor Container Child:**
+    * Right-click on the `TemporalMap` GameObject.
+    * Select `Create Empty`. Rename it `AnchorContainer`.
+    * **RectTransform for AnchorContainer:**
+        * This is crucial for `TemporalRegistry.cs`.
+        * Set its Anchors to stretch to fill the `TemporalMap` parent (Anchors: Min X:0, Min Y:0, Max X:1, Max Y:1).
+        * Set Left, Top, Right, Bottom all to `0`.
+        * Set Pivot to `(0,0)` (bottom-left). This matches the assumption in `TemporalRegistry.cs`'s `ConvertWorldToMinimapPosition` method. If you use a different pivot, you'll need to adjust the script.
+
+5.  **Add TemporalRegistry Script:**
+    * Select the `TemporalMap` GameObject.
+    * Click `Add Component` in the Inspector.
+    * Search for and add the `TemporalRegistry.cs` script.
+
+6.  **Configure TemporalRegistry Component:**
+    * On the `TemporalMap` GameObject, find the `TemporalRegistry` component.
+    * **Anchor Container:** Drag the `AnchorContainer` GameObject (child of `TemporalMap`) from the Hierarchy to this slot.
+    * **Gravastar Anchor Prefab:** Drag your `MinimapGravastarAnchor.prefab` (created in the previous guide) from the Project window to this slot.
+    * **World Space Min/Max Bounds:** Configure these Vector3 fields to define the rectangular area of your 3D game world that the minimap should represent. For example:
+        * Min Bounds: `(X:-500, Y:0, Z:-500)`
+        * Max Bounds: `(X:500, Y:0, Z:500)`
+        * These define a 1000x1000 unit area on the XZ plane. Adjust Y if your game has significant verticality you want to represent or if your "ground" isn't at Y=0.
+    * **Update Interval:** Set as desired (e.g., `0.1` for 10 updates per second).
+
+7.  **Create Prefab:**
+    * Drag the configured `TemporalMap` GameObject (which is a child of your Canvas) from your Hierarchy into your Project window (e.g., into `Prefabs/UI/`). This creates the `TemporalMap.prefab`.
+    * You can now instantiate this prefab into any scene that needs the minimap.
+
+---
+**Original User .txt Reference for `TemporalMap` (for context):**

@@ -1,0 +1,23 @@
+{
+  "name": "Gravastar Core Node",
+  "description": "A quantum-anchored gravitational core node used in the Dalax Biobot Project.",
+  "image": "ipfs://QmExampleHash/gravastar.png",
+  "attributes": [
+    {
+      "trait_type": "Stability",
+      "value": 1.0
+    },
+    {
+      "trait_type": "Intensity",
+      "value": 5.0
+    },
+    {
+      "trait_type": "Energy Level",
+      "value": 42.0
+    },
+    {
+      "trait_type": "Temporal Anchor",
+      "value": true
+    }
+  ]
+}

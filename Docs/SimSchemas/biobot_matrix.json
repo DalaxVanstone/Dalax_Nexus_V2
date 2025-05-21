@@ -1,0 +1,47 @@
+{
+    "schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Biobot",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "species": {
+            "type": "string"
+        },
+        "genome": {
+            "type": "object"
+        },
+        "traits": {
+            "type": "object",
+            "properties": {
+                "energyEfficiency": {
+                    "type": "number"
+                },
+                "mutationRate": {
+                    "type": "number"
+                },
+                "lifespan": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "energyEfficiency",
+                "mutationRate",
+                "lifespan"
+            ]
+        },
+        "environmentInteractions": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": [
+        "id",
+        "species",
+        "genome",
+        "traits"
+    ]
+}

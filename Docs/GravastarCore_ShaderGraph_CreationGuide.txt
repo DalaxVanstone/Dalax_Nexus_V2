@@ -1,0 +1,86 @@
+// GravastarCore_ShaderGraph_CreationGuide.txt
+
+This guide outlines how to conceptually build the GravastarCore shader
+using Unity's Shader Graph. You will build this visually in the Shader Graph editor.
+Apply the resulting Material to your Gravastar 3D model.
+
+---
+**Shader Graph Name:** GravastarCore
+**Location Suggestion:** Dalax_BiobotProject/Shaders/
+**Target Render Pipeline:** URP (Universal Render Pipeline) or HDRP (High Definition Render Pipeline)
+  (Ensure your project is configured for one of these pipelines).
+---
+
+**I. Shader Graph Properties (Define in Blackboard):**
+
+* `_VacuumEnergyLevel` (Vector1, Default: 10) - Main driver from script.
+* `_HorizonColor` (Color, Default: R:0.4 G:0.9 B:1.0 A:1.0 - Cyan)
+* `_PulseSpeed` (Vector1, Default: 1)
+* `_PulseMinMax` (Vector2, Default: X:0.5 Y:1.0) - Min/Max intensity of pulse.
+* `_FresnelPowerHorizon` (Vector1, Default: 4) - Controls tightness of horizon fresnel.
+* `_DistortionStrength` (Vector1, Default: 0.05) - Multiplier for surface vertex distortion.
+* `_NoiseScaleDistortion` (Vector1, Default: 20) - Scale of noise for distortion.
+* `_NoiseSpeedDistortion` (Vector2, Default: X:0.1 Y:0.1) - Speed for scrolling distortion noise.
+* `_FlareThreshold` (Vector1, Default: 50) - Energy level for flare activation.
+* `_FlareColor` (Color, Default: R:1.0 G:1.0 B:1.0 A:1.0 - White)
+* `_FlareIntensity` (Vector1, Default: 2.0) - HDR intensity for flare.
+* `_FlareSmoothness` (Vector1, Default: 10.0) - How smoothly flare transitions around threshold.
+* `_BaseColorGravastar` (Color, Default: R:0.05 G:0.05 B:0.05 A:1.0 - Very Dark Grey)
+
+**II. Building Effect 1: Inner Event Horizon Pulsing**
+
+1.  **Time & Pulse:**
+    * `Time` node -> `Multiply` (with `_PulseSpeed`) -> `Sine` node. (Output: pulseWave)
+    * `Remap` node (Input: pulseWave, InMinMax: -1,1, OutMinMax: `_PulseMinMax.X`, `_PulseMinMax.Y`). (Output: currentPulseIntensity)
+2.  **Fresnel:**
+    * `Fresnel Effect` node (Power: `_FresnelPowerHorizon`). (Output: fresnelHorizon)
+3.  **Combine & Color:**
+    * `Multiply` (fresnelHorizon, currentPulseIntensity) -> `Multiply` (with `_HorizonColor`). (Output: horizonEmission)
+
+**III. Building Effect 2: Surface Vertex Distortion**
+
+1.  **Animated Noise:**
+    * `Time` node -> `Multiply` (with `_NoiseSpeedDistortion`) -> `Add` (to `UV` node's output). (Output: scrollingUVs)
+    * `Simple Noise` node (UV: scrollingUVs, Scale: `_NoiseScaleDistortion`). (Output: noiseValue, typically 0-1)
+    * `Remap` node (Input: noiseValue, InMinMax: 0,1, OutMinMax: -1,1). (Output: signedNoise)
+2.  **Displacement Amount:**
+    * `Multiply` (signedNoise, `_VacuumEnergyLevel`) -> `Multiply` (with `_DistortionStrength`). (Output: displacementForce)
+3.  **Apply Displacement:**
+    * `Normal Vector` node (Space: Object) -> `Multiply` (with displacementForce). (Output: vertexOffset)
+    * `Position` node (Space: Object) -> `Add` (with vertexOffset).
+    * **Connect to Master Node:** `Vertex Position` slot.
+
+**IV. Building Effect 3: Core Flare**
+
+1.  **Activation:**
+    * `Add` node (`_FlareThreshold`, `_FlareSmoothness`). (Output: flareUpperEdge)
+    * `Smoothstep` node (In: `_VacuumEnergyLevel`, Edge1: `_FlareThreshold`, Edge2: flareUpperEdge). (Output: flareActivationFactor, 0-1)
+2.  **Flare Color & Intensity:**
+    * `Multiply` (`_FlareColor`, `_FlareIntensity`). (Output: baseFlare)
+3.  **Modulate Flare:**
+    * `Multiply` (baseFlare, flareActivationFactor). (Output: flareEmission)
+    * *(Optional: Multiply this by another inverted Fresnel or a sphere mask for a more defined core shape before this step.)*
+
+**V. Connecting to Master Node (URP/HDRP PBR or Unlit):**
+
+1.  **Emission:**
+    * `Add` node (horizonEmission, flareEmission).
+    * Connect to `Emission` slot on the Master Node.
+2.  **Base Color:**
+    * Connect `_BaseColorGravastar` (Property Node) to `Base Color` (or `Color` if Unlit) slot.
+3.  **Alpha/Transparency (If Needed):**
+    * If your gravastar needs transparency (e.g., for soft edges on the fresnel), set the Surface Type to "Transparent" on the Master Node settings.
+    * You might need to combine fresnel outputs or other calculations into an Alpha value and connect it to the `Alpha` slot. For an opaque object, set Surface Type to "Opaque".
+4.  **Other PBR Inputs (Metallic, Smoothness):**
+    * Set these via Property Nodes or constant values as desired for the gravastar's material properties. Often `0` for Metallic and `0.5` for Smoothness is a decent start for non-metallic surfaces.
+
+**VI. Usage:**
+
+1.  Save your Shader Graph. Unity will compile it.
+2.  Create a new Material in your Project window (`Create > Material`).
+3.  In the Material's Inspector, select your `GravastarCore` shader from the Shader dropdown.
+4.  Assign this Material to the Renderer component of your Gravastar 3D models.
+5.  Your C# scripts (e.g., `GravastarField.cs` or a dedicated manager) will get this material instance at runtime and update `_VacuumEnergyLevel` (and other properties if needed) using `material.SetFloat("_VacuumEnergyLevel", value);`.
+
+---
+**End of Guide**
